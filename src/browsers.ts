@@ -53,7 +53,7 @@ export async function expand(names: string[], browserOptions: {[name: string]: s
     );
   }
 
-  const installedByName = await detect(browserOptions);
+  const installedByName = await detect(names, browserOptions);
   const installed = Object.keys(installedByName);
   // Opting to use everything?
   if (names.length === 0) {
@@ -76,9 +76,9 @@ export async function expand(names: string[], browserOptions: {[name: string]: s
  *
  * Exported and declared as `let` variables for testabilty in wct.
  */
-export let detect = async function detect(browserOptions: {[name: string]: string[]}): Promise<{[browser: string]: wd.Capabilities}> {
+export let detect = async function detect(names: string[], browserOptions: {[name: string]: string[]}): Promise<{[browser: string]: wd.Capabilities}> {
   const launcher = await promisify(launchpad.local)();
-  const browsers = await promisify(launcher.browsers)();
+  const browsers = await promisify(launcher.customBrowsers)(names);
 
   const results: {[browser: string]: wd.Capabilities} = {};
   for (const browser of browsers) {
